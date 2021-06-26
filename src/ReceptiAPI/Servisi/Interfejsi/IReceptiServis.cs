@@ -6,7 +6,7 @@ namespace ReceptiAPI.Servisi.Interfejsi
 {
     public interface IReceptiServis
     {
-        List<ReceptDTO> PronadjiSve();
+        Task<List<ReceptDTO>> PronadjiSve(int brojStrane, int velicinaStrane);
         Task<ReceptDTO> PronadjiJedan(string id);
         Task<ReceptDTO> Kreiraj(ReceptDTO recept);
         Task<ReceptDTO> Azuriraj(string id, ReceptDTO recept);

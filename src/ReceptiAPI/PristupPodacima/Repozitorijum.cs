@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Cosmonaut;
+using Cosmonaut.Extensions;
+using Cosmonaut.Response;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Logging;
@@ -70,13 +71,15 @@ namespace ReceptiAPI.PristupPodacima
             return rezultat;
         }
 
-        public List<T> PronadjiSve()
+        public async Task<List<T>> PronadjiSve(int brojStrane = 1, int velicinaStrane = 10)
         {
-            List<T> rezultat = new List<T>();
+            CosmosPagedResults<T> rezultat = null;
 
             try
             {
-                rezultat = _cosmosStore.Query(new FeedOptions { EnableCrossPartitionQuery = true }).ToList<T>();
+                rezultat = await _cosmosStore.Query(new FeedOptions { EnableCrossPartitionQuery = true })
+                    .WithPagination(brojStrane, velicinaStrane)
+                    .ToPagedListAsync();
             }
             catch (Exception i)
             {
@@ -85,7 +88,7 @@ namespace ReceptiAPI.PristupPodacima
                 throw new ReceptiAPIIzuzetak(500, KonstantneVrednosti.GreskaPrilikomPristupaBaziPodataka);
             }
 
-            return rezultat;
+            return rezultat.Results;
         }
 
         public async Task<T> Azuriraj(T objekat)

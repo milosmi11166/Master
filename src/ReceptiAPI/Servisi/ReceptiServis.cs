@@ -66,9 +66,9 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<ReceptDTO>(recept);
         }
 
-        public List<ReceptDTO> PronadjiSve()
+        public async Task<List<ReceptDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
         {
-            List<Recept> recepti = _receptiRepozitorijum.PronadjiSve();
+            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(brojStrane, velicinaStrane);
 
             return _maper.Map<List<ReceptDTO>>(recepti);
         }

@@ -123,19 +123,20 @@ namespace ReceptiAPI
 
 
         [FunctionName("PronadjiSveRecepte")]
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public  async Task<JsonResult> PronadjiSveRecepte(
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-            [HttpTrigger(AuthorizationLevel.Function, "GET", Route = "v1/recepti")] HttpRequest zahtev)
+           [HttpTrigger(AuthorizationLevel.Function, "GET", Route = "v1/recepti")] HttpRequest zahtev)
         {
             _dnevnik.LogInformation("PronadjiSveRecepte funkcija je primila zahtev.");
+
+            int brojStrane = Int32.TryParse(zahtev.Query["brojStrane"], out brojStrane) ? brojStrane : 1;
+            int velicinaStrane = Int32.TryParse(zahtev.Query["velicinaStrane"], out velicinaStrane) ? velicinaStrane : 10;
 
             var odgovor = new JsonResult(null);
             var recepti = new List<ReceptDTO>();
 
             try
             {
-                recepti = _receptiServis.PronadjiSve();
+                recepti = await _receptiServis.PronadjiSve(brojStrane, velicinaStrane);
 
                 odgovor.Value = recepti;
                 odgovor.StatusCode = StatusCodes.Status200OK;
