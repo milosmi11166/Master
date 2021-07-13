@@ -11,5 +11,11 @@ namespace ReceptiAPI.Servisi.Interfejsi
         Task<ReceptDTO> Kreiraj(ReceptDTO recept);
         Task<ReceptDTO> Azuriraj(string id, ReceptDTO recept);
         Task Obrisi(string id);
+        Task<KorakPripremeDTO> KreirajKorakPripreme(string idRecepta, KorakPripremeDTO korakPripremeDTO);
+        Task<KorakPripremeDTO> AzurirajKorakPripreme(string idRecepta, string idKorakaPripreme, KorakPripremeDTO korakPripremeDTO);
+        Task ObrisiKorakPripreme(string idRecepta, string idKorakaPripreme);
+        Task<SastojakDTO> KreirajSastojak(string idRecepta, SastojakDTO sastojakDTO);
+        Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO);
+        Task ObrisiSastojak(string idRecepta, string idSastojka);
     }
 }

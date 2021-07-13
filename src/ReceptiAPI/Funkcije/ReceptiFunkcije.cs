@@ -121,7 +121,6 @@ namespace ReceptiAPI
             return odgovor;
         }
 
-
         [FunctionName("PronadjiSveRecepte")]
         public  async Task<JsonResult> PronadjiSveRecepte(
            [HttpTrigger(AuthorizationLevel.Function, "GET", Route = "v1/recepti")] HttpRequest zahtev)
@@ -182,6 +181,206 @@ namespace ReceptiAPI
             catch (Exception i)
             {
                 _dnevnik.LogError("Neobradjen izuzetak u funkciji PronadjiJedanRecept.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("KreirajKorakPripreme")]
+        public async Task<JsonResult> KreirajKorakPripreme(
+            [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "v1/recepti/{idRecepta}/koraci-pripreme")] [FromBody] KorakPripremeDTO korakPripremeDTO,
+            [FromRoute] string idRecepta)
+        {
+            _dnevnik.LogInformation("KreirajKorakPripreme funkcija je primila zahtev. Id: " + idRecepta);
+
+            var odgovor = new JsonResult(null);
+            KorakPripremeDTO kreiraniKorakPripremeDTO = null;
+
+            try
+            {
+                kreiraniKorakPripremeDTO = await _receptiServis.KreirajKorakPripreme(idRecepta, korakPripremeDTO);
+
+                odgovor.StatusCode = StatusCodes.Status201Created;
+                odgovor.Value = kreiraniKorakPripremeDTO;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji KreirajKorakPripreme.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("AzurirajKorakPripreme")]
+        public async Task<JsonResult> AzurirajKorakPripreme(
+            [HttpTrigger(AuthorizationLevel.Function, "PUT", Route = "v1/recepti/{idRecepta}/koraci-pripreme/{idKorakaPripreme}")] [FromBody] KorakPripremeDTO korakPripremeDTO,
+            [FromRoute] string idRecepta,
+            [FromRoute] string idKorakaPripreme)
+        {
+            _dnevnik.LogInformation("AzurirajKorakPripreme funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idKorakaPripreme = " + idKorakaPripreme);
+
+            var odgovor = new JsonResult(null);
+            KorakPripremeDTO azuriraniKorakPripremeDTO = null;
+
+            try
+            {
+                azuriraniKorakPripremeDTO = await _receptiServis.AzurirajKorakPripreme(idRecepta, idKorakaPripreme, korakPripremeDTO);
+
+                odgovor.StatusCode = StatusCodes.Status200OK;
+                odgovor.Value = azuriraniKorakPripremeDTO;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji AzurirajKorakPripreme.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("ObrisiKorakPripreme")]
+        public async Task<JsonResult> ObrisiKorakPripreme(
+            [HttpTrigger(AuthorizationLevel.Function, "DELETE", Route = "v1/recepti/{idRecepta}/koraci-pripreme/{idKorakaPripreme}")] HttpRequest zahtev,
+            [FromRoute] string idRecepta,
+            [FromRoute] string idKorakaPripreme)
+        {
+            _dnevnik.LogInformation("ObrisiKorakPripreme funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idKorakaPripreme = " + idKorakaPripreme);
+
+            var odgovor = new JsonResult(null);
+
+            try
+            {
+                await _receptiServis.ObrisiKorakPripreme(idRecepta, idKorakaPripreme);
+
+                odgovor.StatusCode = StatusCodes.Status204NoContent;
+                odgovor.Value = string.Empty;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji ObrisiKorakPripreme.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("KreirajSastojak")]
+        public async Task<JsonResult> KreirajSastojak(
+            [HttpTrigger(AuthorizationLevel.Function, "POST", Route = "v1/recepti/{idRecepta}/sastojci")] [FromBody] SastojakDTO sastojakDTO,
+            [FromRoute] string idRecepta)
+        {
+            _dnevnik.LogInformation("KreirajSastojak funkcija je primila zahtev. Id: " + idRecepta);
+
+            var odgovor = new JsonResult(null);
+            SastojakDTO kreiraniSastojakDTO = null;
+
+            try
+            {
+                kreiraniSastojakDTO = await _receptiServis.KreirajSastojak(idRecepta, sastojakDTO);
+
+                odgovor.StatusCode = StatusCodes.Status201Created;
+                odgovor.Value = kreiraniSastojakDTO;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji KreirajSastojak.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("AzurirajSastojak")]
+        public async Task<JsonResult> AzurirajSastojak(
+            [HttpTrigger(AuthorizationLevel.Function, "PUT", Route = "v1/recepti/{idRecepta}/sastojci/{idSastojka}")] [FromBody] SastojakDTO sastojakDTO,
+            [FromRoute] string idRecepta,
+            [FromRoute] string idSastojka)
+        {
+            _dnevnik.LogInformation("AzurirajSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idSastojka = " + idSastojka);
+
+            var odgovor = new JsonResult(null);
+            SastojakDTO azuriraniSastojakDTO = null;
+
+            try
+            {
+                azuriraniSastojakDTO = await _receptiServis.AzurirajSastojak(idRecepta, idSastojka, sastojakDTO);
+
+                odgovor.StatusCode = StatusCodes.Status200OK;
+                odgovor.Value = azuriraniSastojakDTO;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji AzurirajSastojak.", i);
+
+                odgovor.StatusCode = StatusCodes.Status500InternalServerError;
+                odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };
+            }
+
+            return odgovor;
+        }
+
+        [FunctionName("ObrisiSastojak")]
+        public async Task<JsonResult> ObrisiSastojak(
+            [HttpTrigger(AuthorizationLevel.Function, "DELETE", Route = "v1/recepti/{idRecepta}/sastojci/{idSastojka}")] HttpRequest zahtev,
+            [FromRoute] string idRecepta,
+            [FromRoute] string idSastojka)
+        {
+            _dnevnik.LogInformation("ObrisiSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", IdSastojka = " + idSastojka);
+
+            var odgovor = new JsonResult(null);
+
+            try
+            {
+                await _receptiServis.ObrisiSastojak(idRecepta, idSastojka);
+
+                odgovor.StatusCode = StatusCodes.Status204NoContent;
+                odgovor.Value = string.Empty;
+            }
+            catch (ReceptiAPIIzuzetak rai)
+            {
+                odgovor.StatusCode = rai.HttpStatusKod;
+                odgovor.Value = new GreskaDTO { PorukaGreske = rai.Poruka };
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Neobradjen izuzetak u funkciji ObrisiSastojak.", i);
 
                 odgovor.StatusCode = StatusCodes.Status500InternalServerError;
                 odgovor.Value = new GreskaDTO { PorukaGreske = KonstantneVrednosti.GreskaNaServerskojStrani };

@@ -39,6 +39,16 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<ReceptDTO>(recept);
         }
 
+        public Task<KorakPripremeDTO> AzurirajKorakPripreme(string idRecepta, string idKorakaPripreme, KorakPripremeDTO korakPripremeDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ReceptDTO> Kreiraj(ReceptDTO receptDTO)
         {
             Recept recept = _maper.Map<Recept>(receptDTO);
@@ -52,11 +62,31 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<ReceptDTO>(recept);
         }
 
+        public Task<KorakPripremeDTO> KreirajKorakPripreme(string idRecepta, KorakPripremeDTO korakPripremeDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<SastojakDTO> KreirajSastojak(string idRecepta, SastojakDTO sastojakDTO)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Obrisi(string id)
         {
             await _receptiRepozitorijum.Obrisi(id);
 
             return;
+        }
+
+        public Task ObrisiKorakPripreme(string idRecepta, string idKorakaPripreme)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ObrisiSastojak(string idRecepta, string idSastojka)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ReceptDTO> PronadjiJedan(string id)
