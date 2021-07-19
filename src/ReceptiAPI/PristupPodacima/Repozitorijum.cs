@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using ReceptiAPI.Izuzeci;
 using ReceptiAPI.Konstante;
 using ReceptiAPI.PristupPodacima.Interfejsi;
+using ReceptiAPI.Servisi.Interfejsi;
 
 namespace ReceptiAPI.PristupPodacima
 {
@@ -18,15 +20,17 @@ namespace ReceptiAPI.PristupPodacima
         private readonly ILogger _dnevnik;
         private CosmosStoreSettings _cosmosStorePodesavanja;
         private CosmosStore<T> _cosmosStore;
+        private readonly IKonfiguracijaServis _konfiguracijaServis;
 
-        public Repozitorijum(ILoggerFactory dnevnikFabrika)
+        public Repozitorijum(ILoggerFactory dnevnikFabrika, IKonfiguracijaServis konfiguracijaServis)
         {
             _dnevnik = dnevnikFabrika.CreateLogger<Repozitorijum<T>>();
-        }
+            _konfiguracijaServis = konfiguracijaServis;
 
-        public void PostaviParametreBaze(string cosmosDbNazivBaze, string cosmosDbUrl, string cosmosDbAutKljuc)
-        {
-            _cosmosStorePodesavanja = new CosmosStoreSettings(cosmosDbNazivBaze, cosmosDbUrl, cosmosDbAutKljuc);
+            _cosmosStorePodesavanja = new CosmosStoreSettings(
+                    _konfiguracijaServis.CosmosDbNazivBaze,
+                    _konfiguracijaServis.CosmosDbUrl,
+                    _konfiguracijaServis.CosmosDbAutKljuc);
             _cosmosStore = new CosmosStore<T>(_cosmosStorePodesavanja);
         }
 
@@ -71,15 +75,23 @@ namespace ReceptiAPI.PristupPodacima
             return rezultat;
         }
 
-        public async Task<List<T>> PronadjiSve(int brojStrane = 1, int velicinaStrane = 10)
+        public async Task<List<T>> PronadjiSve(string poljeFiltera = null, string vrednostFiltera = null, bool filterirajDeoVrednosti = false, int brojStrane = 1, int velicinaStrane = 10)
         {
-            CosmosPagedResults<T> rezultat = null;
+            List<T> rezultat = null;
+            string cosmosDbUpit = "select * from c";
 
+            if(!string.IsNullOrEmpty(poljeFiltera) && !string.IsNullOrEmpty(vrednostFiltera))
+            {
+                cosmosDbUpit += filterirajDeoVrednosti ?
+                    " where contains(c." + poljeFiltera + ", '" + vrednostFiltera + "')" :
+                    " where c." + poljeFiltera + " = '" + vrednostFiltera + "'";
+            }
+                
             try
             {
-                rezultat = await _cosmosStore.Query(new FeedOptions { EnableCrossPartitionQuery = true })
+                rezultat = await _cosmosStore.Query(cosmosDbUpit, null, new FeedOptions { EnableCrossPartitionQuery = true })
                     .WithPagination(brojStrane, velicinaStrane)
-                    .ToPagedListAsync();
+                    .ToListAsync();
             }
             catch (Exception i)
             {
@@ -88,7 +100,7 @@ namespace ReceptiAPI.PristupPodacima
                 throw new ReceptiAPIIzuzetak(500, KonstantneVrednosti.GreskaPrilikomPristupaBaziPodataka);
             }
 
-            return rezultat.Results;
+            return rezultat;
         }
 
         public async Task<T> Azuriraj(T objekat)

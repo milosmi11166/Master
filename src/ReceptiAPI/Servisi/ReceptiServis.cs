@@ -12,19 +12,20 @@ namespace ReceptiAPI.Servisi
     public class ReceptiServis : IReceptiServis
     {
         private readonly IRepozitorijum<Recept> _receptiRepozitorijum;
+        private readonly IRepozitorijum<KorakPripreme> _koraciPripremeRepozitorijum;
+        private readonly IRepozitorijum<Sastojak> _sastojciRepozitorijum;
         private readonly IMapper _maper;
-        private readonly IKonfiguracijaServis _konfiguracijaServis;
 
-        public ReceptiServis(IRepozitorijum<Recept> receptiRepozitorijum, IMapper maper, IKonfiguracijaServis konfiguracijaServis)
+        public ReceptiServis(
+            IRepozitorijum<Recept> receptiRepozitorijum,
+            IMapper maper,
+            IRepozitorijum<KorakPripreme> koraciPripremeRepozitorijum,
+            IRepozitorijum<Sastojak> sastojciRepozitorijum)
         {
             _receptiRepozitorijum = receptiRepozitorijum;
             _maper = maper;
-            _konfiguracijaServis = konfiguracijaServis;
-
-            _receptiRepozitorijum.PostaviParametreBaze(
-                    _konfiguracijaServis.CosmosDbNazivBaze,
-                    _konfiguracijaServis.CosmosDbUrl,
-                    _konfiguracijaServis.CosmosDbAutKljuc);
+            _koraciPripremeRepozitorijum = koraciPripremeRepozitorijum;
+            _sastojciRepozitorijum = sastojciRepozitorijum;
         }
 
         public async Task<ReceptDTO> Azuriraj(string id, ReceptDTO receptDTO)
@@ -39,14 +40,30 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<ReceptDTO>(recept);
         }
 
-        public Task<KorakPripremeDTO> AzurirajKorakPripreme(string idRecepta, string idKorakaPripreme, KorakPripremeDTO korakPripremeDTO)
+        public async Task<KorakPripremeDTO> AzurirajKorakPripreme(string idRecepta, string idKorakaPripreme, KorakPripremeDTO korakPripremeDTO)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+            KorakPripreme korakPripreme = await _koraciPripremeRepozitorijum.PronadjiJedan(idKorakaPripreme);
+
+            korakPripreme = _maper.Map<KorakPripremeDTO, KorakPripreme>(korakPripremeDTO, korakPripreme);
+            korakPripreme.DatumAzuriranja = DateTime.UtcNow;
+
+            korakPripreme = await _koraciPripremeRepozitorijum.Azuriraj(korakPripreme);
+
+            return _maper.Map<KorakPripremeDTO>(korakPripreme);
         }
 
-        public Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO)
+        public async Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+            Sastojak sastojak = await _sastojciRepozitorijum.PronadjiJedan(idSastojka);
+
+            sastojak = _maper.Map<SastojakDTO, Sastojak>(sastojakDTO, sastojak);
+            sastojak.DatumAzuriranja = DateTime.UtcNow;
+
+            sastojak = await _sastojciRepozitorijum.Azuriraj(sastojak);
+
+            return _maper.Map<SastojakDTO>(sastojak);
         }
 
         public async Task<ReceptDTO> Kreiraj(ReceptDTO receptDTO)
@@ -62,43 +79,77 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<ReceptDTO>(recept);
         }
 
-        public Task<KorakPripremeDTO> KreirajKorakPripreme(string idRecepta, KorakPripremeDTO korakPripremeDTO)
+        public async Task<KorakPripremeDTO> KreirajKorakPripreme(string idRecepta, KorakPripremeDTO korakPripremeDTO)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+
+            KorakPripreme korakPripreme = _maper.Map<KorakPripreme>(korakPripremeDTO);
+
+            korakPripreme.Id = Guid.NewGuid().ToString();
+            korakPripreme.DatumKreiranja = DateTime.UtcNow;
+            korakPripreme.DatumAzuriranja = DateTime.UtcNow;
+            korakPripreme.IdRecepta = idRecepta;
+
+            korakPripreme = await _koraciPripremeRepozitorijum.Kreiraj(korakPripreme);
+
+            return _maper.Map<KorakPripremeDTO>(korakPripreme);
         }
 
-        public Task<SastojakDTO> KreirajSastojak(string idRecepta, SastojakDTO sastojakDTO)
+        public async Task<SastojakDTO> KreirajSastojak(string idRecepta, SastojakDTO sastojakDTO)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+
+            Sastojak sastojak = _maper.Map<Sastojak>(sastojakDTO);
+
+            sastojak.Id = Guid.NewGuid().ToString();
+            sastojak.DatumKreiranja = DateTime.UtcNow;
+            sastojak.DatumAzuriranja = DateTime.UtcNow;
+            sastojak.IdRecepta = idRecepta;
+
+            sastojak = await _sastojciRepozitorijum.Kreiraj(sastojak);
+
+            return _maper.Map<SastojakDTO>(sastojak);
         }
 
         public async Task Obrisi(string id)
         {
-            await _receptiRepozitorijum.Obrisi(id);
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(id);
 
-            return;
+            await _receptiRepozitorijum.Obrisi(recept.Id);
         }
 
-        public Task ObrisiKorakPripreme(string idRecepta, string idKorakaPripreme)
+        public async Task ObrisiKorakPripreme(string idRecepta, string idKorakaPripreme)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+            KorakPripreme korakPripreme = await _koraciPripremeRepozitorijum.PronadjiJedan(idKorakaPripreme);
+
+            await _koraciPripremeRepozitorijum.Obrisi(korakPripreme.Id);
         }
 
-        public Task ObrisiSastojak(string idRecepta, string idSastojka)
+        public async Task ObrisiSastojak(string idRecepta, string idSastojka)
         {
-            throw new NotImplementedException();
+            Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
+            Sastojak sastojak = await _sastojciRepozitorijum.PronadjiJedan(idSastojka);
+
+            await _sastojciRepozitorijum.Obrisi(sastojak.Id);
         }
 
         public async Task<ReceptDTO> PronadjiJedan(string id)
         {
             Recept recept = await _receptiRepozitorijum.PronadjiJedan(id);
+            List<Sastojak> sastojci = await _sastojciRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, Int32.MaxValue);
+            List<KorakPripreme> koraciPripreme = await _koraciPripremeRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, Int32.MaxValue);
 
-            return _maper.Map<ReceptDTO>(recept);
+            ReceptDTO receptDTO = _maper.Map<ReceptDTO>(recept);
+            receptDTO.Sastojci = _maper.Map<List<SastojakDTO>>(sastojci);
+            receptDTO.KoraciPripreme = _maper.Map<List<KorakPripremeDTO>>(koraciPripreme);
+
+            return receptDTO;
         }
 
         public async Task<List<ReceptDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
         {
-            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(brojStrane, velicinaStrane);
+            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(null, null, false, brojStrane, velicinaStrane);
 
             return _maper.Map<List<ReceptDTO>>(recepti);
         }

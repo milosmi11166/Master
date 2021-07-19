@@ -17,10 +17,7 @@ namespace ReceptiAPI
     {
         public void Configure(IWebJobsBuilder graditelj)
         {
-
-            var cosmosDbNazivBaze = System.Environment.GetEnvironmentVariable("cosmosDbNazivBaze");
-            var cosmosDbUrl = System.Environment.GetEnvironmentVariable("cosmosDbUrl");
-            var cosmosDbAutKljuc = System.Environment.GetEnvironmentVariable("cosmosDbAutKljuc");
+            graditelj.Services.AddSingleton<IKonfiguracijaServis, KonfiguracijaServis>();
 
             var maperPodesavanja = new MapperConfiguration(mp =>
             {
@@ -31,12 +28,12 @@ namespace ReceptiAPI
 
             graditelj.Services.AddLogging();
             graditelj.Services.AddScoped<IRepozitorijum<Recept>, Repozitorijum<Recept>>();
+            graditelj.Services.AddScoped<IRepozitorijum<Sastojak>, Repozitorijum<Sastojak>>();
+            graditelj.Services.AddScoped<IRepozitorijum<Namirnica>, Repozitorijum<Namirnica>>();
+            graditelj.Services.AddScoped<IRepozitorijum<KorakPripreme>, Repozitorijum<KorakPripreme>>();
 
-            graditelj.Services.AddSingleton<IKonfiguracijaServis, KonfiguracijaServis>();
             graditelj.Services.AddScoped<IReceptiServis, ReceptiServis>();
-
-
-
+            graditelj.Services.AddScoped<INamirniceServis, NamirniceServis>();
         }
     }
 }

@@ -16,11 +16,11 @@ namespace ReceptiAPI.DTO
         public DateTime DatumKreiranja { get; set; }
         [JsonProperty(PropertyName = "datumAzuriranja")]
         public DateTime DatumAzuriranja { get; set; }
-        [JsonProperty(PropertyName = "koraciPripreme")]
+        [JsonProperty(PropertyName = "koraciPripreme", NullValueHandling = NullValueHandling.Ignore)]
         public List<KorakPripremeDTO> KoraciPripreme;
-        [JsonProperty(PropertyName = "sastojci")]
+        [JsonProperty(PropertyName = "sastojci", NullValueHandling = NullValueHandling.Ignore)]
         public List<SastojakDTO> Sastojci { get; set; }
-        [JsonProperty(PropertyName = "nutritivneVrednosti")]
+        [JsonProperty(PropertyName = "nutritivneVrednosti", NullValueHandling = NullValueHandling.Ignore)]
         public NutritivneVrednostiDTO NutritivneVrednosti { get; set; }
     }
 }

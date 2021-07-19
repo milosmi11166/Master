@@ -159,7 +159,7 @@ namespace ReceptiAPI
 
         [FunctionName("PronadjiJednuNamirnicu")]
         public async Task<JsonResult> PronadjiJednuNamirnicu(
-            [HttpTrigger(AuthorizationLevel.Function, "GET", Route = "v1/recepti/{id}")] HttpRequest zahtev,
+            [HttpTrigger(AuthorizationLevel.Function, "GET", Route = "v1/namirnice/{id}")] HttpRequest zahtev,
             [FromRoute] string id)
         {
             _dnevnik.LogInformation("PronadjiJednuNamirnicu funkcija je primila zahtev. Id = " + id);
