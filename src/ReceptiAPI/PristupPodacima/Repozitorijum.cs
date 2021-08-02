@@ -80,13 +80,44 @@ namespace ReceptiAPI.PristupPodacima
             List<T> rezultat = null;
             string cosmosDbUpit = "select * from c";
 
-            if(!string.IsNullOrEmpty(poljeFiltera) && !string.IsNullOrEmpty(vrednostFiltera))
+            if(!string.IsNullOrEmpty(poljeFiltera))
             {
                 cosmosDbUpit += filterirajDeoVrednosti ?
                     " where contains(c." + poljeFiltera + ", '" + vrednostFiltera + "')" :
                     " where c." + poljeFiltera + " = '" + vrednostFiltera + "'";
             }
                 
+            try
+            {
+                rezultat = await _cosmosStore.Query(cosmosDbUpit, null, new FeedOptions { EnableCrossPartitionQuery = true })
+                    .WithPagination(brojStrane, velicinaStrane)
+                    .ToListAsync();
+            }
+            catch (Exception i)
+            {
+                _dnevnik.LogError("Izuzetak prilikom pristupa bazi podataka.", i);
+
+                throw new ReceptiAPIIzuzetak(500, KonstantneVrednosti.GreskaPrilikomPristupaBaziPodataka);
+            }
+
+            return rezultat;
+        }
+
+        public async Task<List<T>> PronadjiSve(string poljeFiltera = null, List<string> vrednostiFiltera = null, int brojStrane = 1, int velicinaStrane = 10)
+        {
+            List<T> rezultat = null;
+            string cosmosDbUpit = "select * from c";
+
+            if (!string.IsNullOrEmpty(poljeFiltera))
+            {
+                cosmosDbUpit += " where c." + poljeFiltera + " in (";
+                for(int i = 0; i < vrednostiFiltera.Count - 1; i++)
+                {
+                    cosmosDbUpit += "'" + vrednostiFiltera[i] + "', ";
+                }
+                cosmosDbUpit += "'" + vrednostiFiltera.Last() + "')";
+            }
+
             try
             {
                 rezultat = await _cosmosStore.Query(cosmosDbUpit, null, new FeedOptions { EnableCrossPartitionQuery = true })

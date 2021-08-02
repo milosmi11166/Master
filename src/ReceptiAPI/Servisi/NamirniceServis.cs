@@ -1,35 +1,67 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using ReceptiAPI.DTO;
+using ReceptiAPI.Modeli;
+using ReceptiAPI.PristupPodacima.Interfejsi;
 using ReceptiAPI.Servisi.Interfejsi;
 
 namespace ReceptiAPI.Servisi
 {
     public class NamirniceServis : INamirniceServis
     {
-        public Task<NamirnicaDTO> Azuriraj(string id, NamirnicaDTO namirnicaDTO)
+        private readonly IRepozitorijum<Namirnica> _namirniceRepozitorijum;
+        private readonly IMapper _maper;
+
+        public NamirniceServis(
+            IRepozitorijum<Namirnica> namirniceRepozitorijum,
+            IMapper maper)
         {
-            throw new System.NotImplementedException();
+            _namirniceRepozitorijum = namirniceRepozitorijum;
+            _maper = maper;
         }
 
-        public Task<NamirnicaDTO> Kreiraj(NamirnicaDTO namirnicaDTO)
+        public async Task<NamirnicaDTO> Azuriraj(string id, NamirnicaDTO namirnicaDTO)
         {
-            throw new System.NotImplementedException();
+            Namirnica namirnica = await _namirniceRepozitorijum.PronadjiJedan(id);
+
+            namirnica = _maper.Map<NamirnicaDTO, Namirnica>(namirnicaDTO, namirnica);
+
+            namirnica = await _namirniceRepozitorijum.Azuriraj(namirnica);
+
+            return _maper.Map<NamirnicaDTO>(namirnica);
         }
 
-        public Task Obrisi(string id)
+        public async Task<NamirnicaDTO> Kreiraj(NamirnicaDTO namirnicaDTO)
         {
-            throw new System.NotImplementedException();
+            Namirnica namirnica = _maper.Map<Namirnica>(namirnicaDTO);
+            namirnica.Id = Guid.NewGuid().ToString();
+
+            namirnica = await _namirniceRepozitorijum.Kreiraj(namirnica);
+
+            return _maper.Map<NamirnicaDTO>(namirnica);
         }
 
-        public Task<NamirnicaDTO> PronadjiJedan(string id)
+        public async Task Obrisi(string id)
         {
-            throw new System.NotImplementedException();
+            Namirnica namirnica = await _namirniceRepozitorijum.PronadjiJedan(id);
+
+            await _namirniceRepozitorijum.Obrisi(namirnica.Id);
         }
 
-        public Task<List<NamirnicaDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
+        public async Task<NamirnicaDTO> PronadjiJedan(string id)
         {
-            throw new System.NotImplementedException();
+            Namirnica namirnica = await _namirniceRepozitorijum.PronadjiJedan(id);
+
+            return _maper.Map<NamirnicaDTO>(namirnica);
+        }
+
+        public async Task<List<NamirnicaDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
+        {
+            List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve(null, null, false, brojStrane, velicinaStrane);
+
+            return _maper.Map<List<NamirnicaDTO>>(namirnice);
         }
     }
 }

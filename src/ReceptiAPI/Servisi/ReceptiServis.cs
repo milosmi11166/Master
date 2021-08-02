@@ -5,6 +5,7 @@ using ReceptiAPI.PristupPodacima.Interfejsi;
 using ReceptiAPI.Servisi.Interfejsi;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ReceptiAPI.Servisi
@@ -14,18 +15,21 @@ namespace ReceptiAPI.Servisi
         private readonly IRepozitorijum<Recept> _receptiRepozitorijum;
         private readonly IRepozitorijum<KorakPripreme> _koraciPripremeRepozitorijum;
         private readonly IRepozitorijum<Sastojak> _sastojciRepozitorijum;
+        private readonly IRepozitorijum<Namirnica> _namirniceRepozitorijum;
         private readonly IMapper _maper;
 
         public ReceptiServis(
             IRepozitorijum<Recept> receptiRepozitorijum,
             IMapper maper,
             IRepozitorijum<KorakPripreme> koraciPripremeRepozitorijum,
-            IRepozitorijum<Sastojak> sastojciRepozitorijum)
+            IRepozitorijum<Sastojak> sastojciRepozitorijum,
+            IRepozitorijum<Namirnica> namirniceRepozitorijum)
         {
             _receptiRepozitorijum = receptiRepozitorijum;
             _maper = maper;
             _koraciPripremeRepozitorijum = koraciPripremeRepozitorijum;
             _sastojciRepozitorijum = sastojciRepozitorijum;
+            _namirniceRepozitorijum = namirniceRepozitorijum;
         }
 
         public async Task<ReceptDTO> Azuriraj(string id, ReceptDTO receptDTO)
@@ -137,13 +141,13 @@ namespace ReceptiAPI.Servisi
         public async Task<ReceptDTO> PronadjiJedan(string id)
         {
             Recept recept = await _receptiRepozitorijum.PronadjiJedan(id);
-            List<Sastojak> sastojci = await _sastojciRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, Int32.MaxValue);
-            List<KorakPripreme> koraciPripreme = await _koraciPripremeRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, Int32.MaxValue);
+            List<Sastojak> sastojci = await _sastojciRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, int.MaxValue);
+            List<KorakPripreme> koraciPripreme = await _koraciPripremeRepozitorijum.PronadjiSve("idRecepta", recept.Id, false, 1, int.MaxValue);
 
             ReceptDTO receptDTO = _maper.Map<ReceptDTO>(recept);
             receptDTO.Sastojci = _maper.Map<List<SastojakDTO>>(sastojci);
             receptDTO.KoraciPripreme = _maper.Map<List<KorakPripremeDTO>>(koraciPripreme);
-
+            
             return receptDTO;
         }
 
@@ -152,6 +156,34 @@ namespace ReceptiAPI.Servisi
             List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(null, null, false, brojStrane, velicinaStrane);
 
             return _maper.Map<List<ReceptDTO>>(recepti);
+        }
+
+        private async Task<NutritivneVrednostiDTO> IzracunajNutritivneVrednosti(List<Sastojak> sastojci)
+        {
+            List<string> idNamirnica = sastojci.Select(x => x.IdNamirnice).ToList();
+
+            List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve("id", idNamirnica, 1, int.MaxValue);
+
+            IEnumerable<NutritivneVrednostiDTO> nutritivneVrednostiPoNamirnicama = 
+                                                                             from s in sastojci
+                                                                             join n in namirnice on s.IdNamirnice equals n.Id
+                                                                             select new NutritivneVrednostiDTO
+                                                                             {
+                                                                                 Kalorije = (s.KolicinaUGramima / 100) * n.Kalorije,
+                                                                                 Proteini = (s.KolicinaUGramima / 100) * n.Proteini,
+                                                                                 Masti = (s.KolicinaUGramima / 100) * n.Masti,
+                                                                                 ZasiceneMasti = (s.KolicinaUGramima / 100) * n.ZasiceneMasti,
+                                                                                 Vlakna = (s.KolicinaUGramima / 100) * n.Vlakna,
+                                                                             };
+
+            return new NutritivneVrednostiDTO
+            {
+                Kalorije = nutritivneVrednostiPoNamirnicama.Sum(x => x.Kalorije),
+                Proteini = nutritivneVrednostiPoNamirnicama.Sum(x => x.Proteini),
+                Masti = nutritivneVrednostiPoNamirnicama.Sum(x => x.Masti),
+                ZasiceneMasti = nutritivneVrednostiPoNamirnicama.Sum(x => x.ZasiceneMasti),
+                Vlakna = nutritivneVrednostiPoNamirnicama.Sum(x => x.Vlakna)
+            };
         }
     }
 }
