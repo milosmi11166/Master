@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using ReceptiAPI.DTO;
 using ReceptiAPI.Servisi.Interfejsi;
