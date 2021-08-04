@@ -10,10 +10,10 @@ using ReceptiAPI.PristupPodacima.Interfejsi;
 using ReceptiAPI.Servisi;
 using ReceptiAPI.Servisi.Interfejsi;
 
-[assembly: WebJobsStartup(typeof(Startup))]
+[assembly: WebJobsStartup(typeof(Pokretanje))]
 namespace ReceptiAPI
 {
-    public class Startup : IWebJobsStartup
+    public class Pokretanje : IWebJobsStartup
     {
         public void Configure(IWebJobsBuilder graditelj)
         {
