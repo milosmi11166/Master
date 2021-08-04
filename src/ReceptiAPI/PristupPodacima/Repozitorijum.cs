@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cosmonaut;
 using Cosmonaut.Extensions;
-using Cosmonaut.Response;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Logging;
@@ -31,6 +30,7 @@ namespace ReceptiAPI.PristupPodacima
                     _konfiguracijaServis.CosmosDbNazivBaze,
                     _konfiguracijaServis.CosmosDbUrl,
                     _konfiguracijaServis.CosmosDbAutKljuc);
+
             _cosmosStore = new CosmosStore<T>(_cosmosStorePodesavanja);
         }
 

@@ -5,7 +5,7 @@ using ReceptiAPI.DTO;
 using ReceptiAPI.Servisi.Interfejsi;
 using System.Threading.Tasks;
 
-namespace ReceptiAPI.Testovi
+namespace ReceptiAPI.Testovi.FunkcijeTestovi
 {
     [TestFixture]
     public class ReceptiFunkcijeTestovi
