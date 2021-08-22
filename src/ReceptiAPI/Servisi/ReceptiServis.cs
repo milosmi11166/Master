@@ -147,7 +147,9 @@ namespace ReceptiAPI.Servisi
             ReceptDTO receptDTO = _maper.Map<ReceptDTO>(recept);
             receptDTO.Sastojci = _maper.Map<List<SastojakDTO>>(sastojci);
             receptDTO.KoraciPripreme = _maper.Map<List<KorakPripremeDTO>>(koraciPripreme);
-            
+
+            receptDTO.NutritivneVrednosti = await IzracunajNutritivneVrednosti(sastojci);
+
             return receptDTO;
         }
 
@@ -171,6 +173,7 @@ namespace ReceptiAPI.Servisi
                                                                              {
                                                                                  Kalorije = (s.KolicinaUGramima / 100) * n.Kalorije,
                                                                                  Proteini = (s.KolicinaUGramima / 100) * n.Proteini,
+                                                                                 Seceri = (s.KolicinaUGramima / 100) * n.Seceri,
                                                                                  Masti = (s.KolicinaUGramima / 100) * n.Masti,
                                                                                  ZasiceneMasti = (s.KolicinaUGramima / 100) * n.ZasiceneMasti,
                                                                                  Vlakna = (s.KolicinaUGramima / 100) * n.Vlakna,
@@ -180,6 +183,7 @@ namespace ReceptiAPI.Servisi
             {
                 Kalorije = nutritivneVrednostiPoNamirnicama.Sum(x => x.Kalorije),
                 Proteini = nutritivneVrednostiPoNamirnicama.Sum(x => x.Proteini),
+                Seceri = nutritivneVrednostiPoNamirnicama.Sum(x => x.Seceri),
                 Masti = nutritivneVrednostiPoNamirnicama.Sum(x => x.Masti),
                 ZasiceneMasti = nutritivneVrednostiPoNamirnicama.Sum(x => x.ZasiceneMasti),
                 Vlakna = nutritivneVrednostiPoNamirnicama.Sum(x => x.Vlakna)
