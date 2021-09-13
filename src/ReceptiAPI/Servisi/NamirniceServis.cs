@@ -57,9 +57,9 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<NamirnicaDTO>(namirnica);
         }
 
-        public async Task<List<NamirnicaDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
+        public async Task<List<NamirnicaDTO>> PronadjiSve(string naziv, int brojStrane, int velicinaStrane)
         {
-            List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve(null, null, false, brojStrane, velicinaStrane);
+            List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve(!string.IsNullOrEmpty(naziv) ? "naziv" : null, naziv, true, brojStrane, velicinaStrane);
 
             return _maper.Map<List<NamirnicaDTO>>(namirnice);
         }

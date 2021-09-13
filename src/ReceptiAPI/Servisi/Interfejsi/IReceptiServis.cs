@@ -6,7 +6,7 @@ namespace ReceptiAPI.Servisi.Interfejsi
 {
     public interface IReceptiServis
     {
-        Task<List<ReceptDTO>> PronadjiSve(int brojStrane, int velicinaStrane);
+        Task<List<ReceptDTO>> PronadjiSve(string opis, int brojStrane, int velicinaStrane);
         Task<ReceptDTO> PronadjiJedan(string id);
         Task<ReceptDTO> Kreiraj(ReceptDTO recept);
         Task<ReceptDTO> Azuriraj(string id, ReceptDTO recept);
@@ -15,7 +15,7 @@ namespace ReceptiAPI.Servisi.Interfejsi
         Task<KorakPripremeDTO> AzurirajKorakPripreme(string idRecepta, string idKorakaPripreme, KorakPripremeDTO korakPripremeDTO);
         Task ObrisiKorakPripreme(string idRecepta, string idKorakaPripreme);
         Task<SastojakDTO> KreirajSastojak(string idRecepta, SastojakDTO sastojakDTO);
-        Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO);
-        Task ObrisiSastojak(string idRecepta, string idSastojka);
+        Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idNamirnice, SastojakDTO sastojakDTO);
+        Task ObrisiSastojak(string idRecepta, string idNamirnice);
     }
 }

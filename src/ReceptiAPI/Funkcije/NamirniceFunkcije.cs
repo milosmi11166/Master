@@ -128,6 +128,7 @@ namespace ReceptiAPI
         {
             _dnevnik.LogInformation("PronadjiSveNamirnice funkcija je primila zahtev.");
 
+            string naziv = zahtev.Query["naziv"];
             int brojStrane = Int32.TryParse(zahtev.Query["brojStrane"], out brojStrane) ? brojStrane : 1;
             int velicinaStrane = Int32.TryParse(zahtev.Query["velicinaStrane"], out velicinaStrane) ? velicinaStrane : 10;
 
@@ -136,7 +137,7 @@ namespace ReceptiAPI
 
             try
             {
-                recepti = await _namirniceServis.PronadjiSve(brojStrane, velicinaStrane);
+                recepti = await _namirniceServis.PronadjiSve(naziv, brojStrane, velicinaStrane);
 
                 odgovor.Value = recepti;
                 odgovor.StatusCode = StatusCodes.Status200OK;

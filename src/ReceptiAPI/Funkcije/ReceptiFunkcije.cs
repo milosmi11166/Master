@@ -127,6 +127,7 @@ namespace ReceptiAPI
         {
             _dnevnik.LogInformation("PronadjiSveRecepte funkcija je primila zahtev.");
 
+            string opis = zahtev.Query["opis"];
             int brojStrane = Int32.TryParse(zahtev.Query["brojStrane"], out brojStrane) ? brojStrane : 1;
             int velicinaStrane = Int32.TryParse(zahtev.Query["velicinaStrane"], out velicinaStrane) ? velicinaStrane : 10;
 
@@ -135,7 +136,7 @@ namespace ReceptiAPI
 
             try
             {
-                recepti = await _receptiServis.PronadjiSve(brojStrane, velicinaStrane);
+                recepti = await _receptiServis.PronadjiSve(opis, brojStrane, velicinaStrane);
 
                 odgovor.Value = recepti;
                 odgovor.StatusCode = StatusCodes.Status200OK;
@@ -324,18 +325,18 @@ namespace ReceptiAPI
 
         [FunctionName("AzurirajSastojak")]
         public async Task<JsonResult> AzurirajSastojak(
-            [HttpTrigger(AuthorizationLevel.Function, "PUT", Route = "v1/recepti/{idRecepta}/sastojci/{idSastojka}")] [FromBody] SastojakDTO sastojakDTO,
+            [HttpTrigger(AuthorizationLevel.Function, "PUT", Route = "v1/recepti/{idRecepta}/sastojci/{idNamirnice}")] [FromBody] SastojakDTO sastojakDTO,
             [FromRoute] string idRecepta,
-            [FromRoute] string idSastojka)
+            [FromRoute] string idNamirnice)
         {
-            _dnevnik.LogInformation("AzurirajSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idSastojka = " + idSastojka);
+            _dnevnik.LogInformation("AzurirajSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idNamirnice = " + idNamirnice);
 
             var odgovor = new JsonResult(null);
             SastojakDTO azuriraniSastojakDTO = null;
 
             try
             {
-                azuriraniSastojakDTO = await _receptiServis.AzurirajSastojak(idRecepta, idSastojka, sastojakDTO);
+                azuriraniSastojakDTO = await _receptiServis.AzurirajSastojak(idRecepta, idNamirnice, sastojakDTO);
 
                 odgovor.StatusCode = StatusCodes.Status200OK;
                 odgovor.Value = azuriraniSastojakDTO;
@@ -358,17 +359,17 @@ namespace ReceptiAPI
 
         [FunctionName("ObrisiSastojak")]
         public async Task<JsonResult> ObrisiSastojak(
-            [HttpTrigger(AuthorizationLevel.Function, "DELETE", Route = "v1/recepti/{idRecepta}/sastojci/{idSastojka}")] HttpRequest zahtev,
+            [HttpTrigger(AuthorizationLevel.Function, "DELETE", Route = "v1/recepti/{idRecepta}/sastojci/{idNamirnice}")] HttpRequest zahtev,
             [FromRoute] string idRecepta,
-            [FromRoute] string idSastojka)
+            [FromRoute] string idNamirnice)
         {
-            _dnevnik.LogInformation("ObrisiSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", IdSastojka = " + idSastojka);
+            _dnevnik.LogInformation("ObrisiSastojak funkcija je primila zahtev. IdRecepta = " + idRecepta + ", idNamirnice = " + idNamirnice);
 
             var odgovor = new JsonResult(null);
 
             try
             {
-                await _receptiServis.ObrisiSastojak(idRecepta, idSastojka);
+                await _receptiServis.ObrisiSastojak(idRecepta, idNamirnice);
 
                 odgovor.StatusCode = StatusCodes.Status204NoContent;
                 odgovor.Value = string.Empty;

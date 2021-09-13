@@ -57,10 +57,11 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<KorakPripremeDTO>(korakPripreme);
         }
 
-        public async Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idSastojka, SastojakDTO sastojakDTO)
+        public async Task<SastojakDTO> AzurirajSastojak(string idRecepta, string idNamirnice, SastojakDTO sastojakDTO)
         {
             Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
-            Sastojak sastojak = await _sastojciRepozitorijum.PronadjiJedan(idSastojka);
+            List<Sastojak> sastojci = await _sastojciRepozitorijum.PronadjiSve("idNamirnice", idNamirnice, false, 1, 1);
+            Sastojak sastojak = sastojci.FirstOrDefault();
 
             sastojak = _maper.Map<SastojakDTO, Sastojak>(sastojakDTO, sastojak);
             sastojak.DatumAzuriranja = DateTime.UtcNow;
@@ -130,10 +131,11 @@ namespace ReceptiAPI.Servisi
             await _koraciPripremeRepozitorijum.Obrisi(korakPripreme.Id);
         }
 
-        public async Task ObrisiSastojak(string idRecepta, string idSastojka)
+        public async Task ObrisiSastojak(string idRecepta, string idNamirnice)
         {
             Recept recept = await _receptiRepozitorijum.PronadjiJedan(idRecepta);
-            Sastojak sastojak = await _sastojciRepozitorijum.PronadjiJedan(idSastojka);
+            List<Sastojak> sastojci = await _sastojciRepozitorijum.PronadjiSve("idNamirnice", idNamirnice, false, 1, 1);
+            Sastojak sastojak = sastojci.FirstOrDefault();
 
             await _sastojciRepozitorijum.Obrisi(sastojak.Id);
         }
@@ -153,9 +155,9 @@ namespace ReceptiAPI.Servisi
             return receptDTO;
         }
 
-        public async Task<List<ReceptDTO>> PronadjiSve(int brojStrane, int velicinaStrane)
+        public async Task<List<ReceptDTO>> PronadjiSve(string opis, int brojStrane, int velicinaStrane)
         {
-            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(null, null, false, brojStrane, velicinaStrane);
+            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(!string.IsNullOrEmpty(opis) ? "opis" : null, opis, true, brojStrane, velicinaStrane);
 
             return _maper.Map<List<ReceptDTO>>(recepti);
         }

@@ -9,7 +9,7 @@ namespace ReceptiAPI.Servisi.Interfejsi
         Task<NamirnicaDTO> Kreiraj(NamirnicaDTO namirnicaDTO);
         Task<NamirnicaDTO> Azuriraj(string id, NamirnicaDTO namirnicaDTO);
         Task Obrisi(string id);
-        Task<List<NamirnicaDTO>> PronadjiSve(int brojStrane, int velicinaStrane);
+        Task<List<NamirnicaDTO>> PronadjiSve(string naziv, int brojStrane, int velicinaStrane);
         Task<NamirnicaDTO> PronadjiJedan(string id);
     }
 }
