@@ -155,15 +155,24 @@ namespace ReceptiAPI.Servisi
             return receptDTO;
         }
 
-        public async Task<List<ReceptDTO>> PronadjiSve(string opis, int brojStrane, int velicinaStrane)
+        public async Task<ListaSaPaginacijomDTO<ReceptDTO>> PronadjiSve(string opis, int brojStrane, int velicinaStrane)
         {
-            List<Recept> recepti = await _receptiRepozitorijum.PronadjiSve(!string.IsNullOrEmpty(opis) ? "opis" : null, opis, true, brojStrane, velicinaStrane);
+            (List<Recept>, Paginacija) recepti = await _receptiRepozitorijum.PronadjiSveSaPaginacijom(!string.IsNullOrEmpty(opis) ? "opis" : null, opis, true, brojStrane, velicinaStrane);
 
-            return _maper.Map<List<ReceptDTO>>(recepti);
+            return new ListaSaPaginacijomDTO<ReceptDTO>
+            {
+                Podaci = _maper.Map<List<ReceptDTO>>(recepti.Item1),
+                Paginacija = _maper.Map<PaginacijaDTO>(recepti.Item2)
+            };
         }
 
         private async Task<NutritivneVrednostiDTO> IzracunajNutritivneVrednosti(List<Sastojak> sastojci)
         {
+            if(sastojci.Count == 0)
+            {
+                return new NutritivneVrednostiDTO();
+            }
+
             List<string> idNamirnica = sastojci.Select(x => x.IdNamirnice).ToList();
 
             List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve("id", idNamirnica, 1, int.MaxValue);
@@ -173,12 +182,12 @@ namespace ReceptiAPI.Servisi
                                                                              join n in namirnice on s.IdNamirnice equals n.Id
                                                                              select new NutritivneVrednostiDTO
                                                                              {
-                                                                                 Kalorije = (s.KolicinaUGramima / 100) * n.Kalorije,
-                                                                                 Proteini = (s.KolicinaUGramima / 100) * n.Proteini,
-                                                                                 Seceri = (s.KolicinaUGramima / 100) * n.Seceri,
-                                                                                 Masti = (s.KolicinaUGramima / 100) * n.Masti,
-                                                                                 ZasiceneMasti = (s.KolicinaUGramima / 100) * n.ZasiceneMasti,
-                                                                                 Vlakna = (s.KolicinaUGramima / 100) * n.Vlakna,
+                                                                                 Kalorije = ((decimal)s.KolicinaUGramima / 100) * n.Kalorije,
+                                                                                 Proteini = ((decimal)s.KolicinaUGramima / 100) * n.Proteini,
+                                                                                 Seceri = ((decimal)s.KolicinaUGramima / 100) * n.Seceri,
+                                                                                 Masti = ((decimal)s.KolicinaUGramima / 100) * n.Masti,
+                                                                                 ZasiceneMasti = ((decimal)s.KolicinaUGramima / 100) * n.ZasiceneMasti,
+                                                                                 Vlakna = ((decimal)s.KolicinaUGramima / 100) * n.Vlakna,
                                                                              };
 
             return new NutritivneVrednostiDTO

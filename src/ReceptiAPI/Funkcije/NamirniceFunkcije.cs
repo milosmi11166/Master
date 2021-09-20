@@ -133,7 +133,7 @@ namespace ReceptiAPI
             int velicinaStrane = Int32.TryParse(zahtev.Query["velicinaStrane"], out velicinaStrane) ? velicinaStrane : 10;
 
             var odgovor = new JsonResult(null);
-            var recepti = new List<NamirnicaDTO>();
+            var recepti = new ListaSaPaginacijomDTO<NamirnicaDTO>();
 
             try
             {

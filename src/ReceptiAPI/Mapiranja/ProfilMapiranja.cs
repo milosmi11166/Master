@@ -27,6 +27,8 @@ namespace ReceptiAPI.Mapiranja
             CreateMap<Namirnica, NamirnicaDTO>();
             CreateMap<NamirnicaDTO, Namirnica>()
                 .ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<Paginacija, PaginacijaDTO>();
+            CreateMap<PaginacijaDTO, Paginacija>();
         }
     }
 }

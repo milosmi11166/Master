@@ -57,11 +57,15 @@ namespace ReceptiAPI.Servisi
             return _maper.Map<NamirnicaDTO>(namirnica);
         }
 
-        public async Task<List<NamirnicaDTO>> PronadjiSve(string naziv, int brojStrane, int velicinaStrane)
+        public async Task<ListaSaPaginacijomDTO<NamirnicaDTO>> PronadjiSve(string naziv, int brojStrane, int velicinaStrane)
         {
-            List<Namirnica> namirnice = await _namirniceRepozitorijum.PronadjiSve(!string.IsNullOrEmpty(naziv) ? "naziv" : null, naziv, true, brojStrane, velicinaStrane);
+            (List<Namirnica>, Paginacija) namirnice = await _namirniceRepozitorijum.PronadjiSveSaPaginacijom(!string.IsNullOrEmpty(naziv) ? "naziv" : null, naziv, true, brojStrane, velicinaStrane);
 
-            return _maper.Map<List<NamirnicaDTO>>(namirnice);
+            return new ListaSaPaginacijomDTO<NamirnicaDTO>
+            {
+                Podaci = _maper.Map<List<NamirnicaDTO>>(namirnice.Item1),
+                Paginacija = _maper.Map<PaginacijaDTO>(namirnice.Item2)
+            };
         }
     }
 }

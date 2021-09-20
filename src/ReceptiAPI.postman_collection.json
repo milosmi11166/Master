@@ -1,0 +1,582 @@
+{
+	"info": {
+		"_postman_id": "2688d41a-6430-4a1b-99ea-9f06e9fbd6f3",
+		"name": "ReceptiAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PronadjiSveRecepte",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti?opis=dunja&brojStrane=2",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti"
+					],
+					"query": [
+						{
+							"key": "opis",
+							"value": "dunja"
+						},
+						{
+							"key": "brojStrane",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PronadjiJedanRecept",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KreirajRecept",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"naziv\": \"Kolači sa borovnicama\",\r\n    \"opis\": \"Jednostavni kolači sa borovnicama i bananama\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AzurirajRecept",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"naziv\": \"Kolači sa borovnicama\",\r\n    \"opis\": \"Jednostavni kolači sa borovnicama i bananama - Novi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObrisiRecept",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/0",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KreirajSastojak",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idNamirnice\": \"f742446e-feb0-4ddc-8d21-148207c92264\",\r\n    \"kolicina\": 2,\r\n    \"jedinicaMere\": \"komad\",\r\n    \"kolicinaUGramima\": 250 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1/sastojci",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1",
+						"sastojci"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AzurirajSastojak",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idNamirnice\": \"f742446e-feb0-4ddc-8d21-148207c92264\",\r\n    \"kolicina\": 3,\r\n    \"jedinicaMere\": \"komad\",\r\n    \"kolicinaUGramima\": 250 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1/sastojci/f742446e-feb0-4ddc-8d21-148207c92264",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1",
+						"sastojci",
+						"f742446e-feb0-4ddc-8d21-148207c92264"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObrisiSastojak",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/933e8225-bb77-45a6-a3a7-f16901f8ebc2/sastojci",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"933e8225-bb77-45a6-a3a7-f16901f8ebc2",
+						"sastojci"
+					],
+					"query": [
+						{
+							"key": "x-functions-key",
+							"value": "{{Code}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KreirajKorakPripreme",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"redniBroj\": 1,\r\n    \"opis\": \"Zagrejte rernu na 180 C. Obložite pleh papirom za pečenje i ostavite sa strane.\",\r\n    \"savet\": \"Ne peci mnogo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1/koraci-pripreme",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1",
+						"koraci-pripreme"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AzurirajKorakPripreme",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"redniBroj\": 1,\r\n    \"opis\": \"Korak pripreme 1 - Novi\",\r\n    \"savet\": \"Ne peci mnogo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/7a6bb39b-0b89-4946-a92a-17d314348ef1/koraci-pripreme/8880db21-d755-426f-b617-e9ae1c719864",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"7a6bb39b-0b89-4946-a92a-17d314348ef1",
+						"koraci-pripreme",
+						"8880db21-d755-426f-b617-e9ae1c719864"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObrisiKorakPripreme",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/recepti/933e8225-bb77-45a6-a3a7-f16901f8ebc2/koraci-pripreme",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"recepti",
+						"933e8225-bb77-45a6-a3a7-f16901f8ebc2",
+						"koraci-pripreme"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PronadjiSveNamirnice",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/namirnice?naziv=buka",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namirnice"
+					],
+					"query": [
+						{
+							"key": "naziv",
+							"value": "buka"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PronadjiJednuNamirnicu",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/namirnice",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namirnice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "KreirajNamirnicu",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"naziv\": \"Banana\",\r\n    \"opis\": \"Banana\",\r\n    \"kategorija\": \"Voce\",\r\n    \"kalorije\": 89,\r\n    \"proteini\": 1.09,\r\n    \"masti\": 0.33,\r\n    \"zasiceneMasti\": 0.11,\r\n    \"seceri\": 10.4,\r\n    \"vlakna\": 2.60 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/namirnice/",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namirnice",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AzurirajNamirnicu",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"naziv\": \"Banana\",\r\n    \"opis\": \"Banana\",\r\n    \"kategorija\": \"Voce\",\r\n    \"kalorije\": 89,\r\n    \"proteini\": 1.09,\r\n    \"masti\": 0.33,\r\n    \"zasiceneMasti\": 0.11,\r\n    \"seceri\": 10.4,\r\n    \"vlakna\": 2.60 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/namirnice/",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namirnice",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ObrisiNamirnicu",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "{{Code}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": null,\r\n    \"naziv\": \"Jabuka\",\r\n    \"opis\": \"Domaca crvena jabuka\",\r\n    \"kategorija\": \"Voce\",\r\n    \"kalorije\": 0.63,\r\n    \"proteini\": 0.044,\r\n    \"masti\": 0.0019,\r\n    \"zasiceneMasti\": 0,\r\n    \"seceri\": 0.0959 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseUrl}}/api/v1/namirnice/",
+					"host": [
+						"{{BaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"namirnice",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BaseUrl",
+			"value": "http://0.0.0.0:7071"
+		},
+		{
+			"key": "Code",
+			"value": ""
+		}
+	]
+}
